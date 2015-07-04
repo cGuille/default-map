@@ -4,22 +4,26 @@
   "description": "This aims to provide a simple Map prototype with default value / value constructor.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha specs --require specs/helpers/chai.js --reporter spec",
+    "tests-watcher": "nodemon -w index.js -w specs --exec mocha specs --require specs/helpers/chai.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/cGuille/default-map.git"
   },
   "keywords": [
-    "map",
     "default",
-    "value",
-    "default"
+    "default value"
   ],
   "author": "@cGuille <cguille.dev@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cGuille/default-map/issues"
   },
-  "homepage": "https://github.com/cGuille/default-map"
+  "homepage": "https://github.com/cGuille/default-map",
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "chai-spies": "^0.6.0",
+    "mocha": "^2.2.5"
+  }
 }
