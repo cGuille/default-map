@@ -183,6 +183,14 @@ describe('DefaultMap', function () {
         expect(defaultMap.has('newKey')).to.be.true;
       });
     });
+    describe('when the key has been deleted', function () {
+      it('returns false', function () {
+        defaultMap.set('deletedKey', 'I still exist');
+        expect(defaultMap.has('deletedKey')).to.be.true;
+        defaultMap.delete('deletedKey');
+        expect(defaultMap.has('deletedKey')).to.be.false;
+      });
+    });
   });
 
   describe('#delete', function () {
