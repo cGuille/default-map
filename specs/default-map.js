@@ -118,10 +118,21 @@ describe('DefaultMap', function () {
       });
     });
     describe('when the key does not exist yet', function () {
-      it('create an entry with the default generator', function () {
-        expect(defaultMap.get('nopeKey')).to.equal('generated value for key: "nopeKey").');
-        expect(defaultMap.get('nopeKey')).to.equal('generated value for key: "nopeKey").');
-        expect(providedDefaultGenerator).to.have.been.called.once();
+      describe('with a default generator', function () {
+        it('creates an entry using the default generator', function () {
+          expect(defaultMap.get('nopeKey')).to.equal('generated value for key: "nopeKey").');
+          expect(defaultMap.get('nopeKey')).to.equal('generated value for key: "nopeKey").');
+          expect(providedDefaultGenerator).to.have.been.called.once();
+        });
+      });
+      describe('without a default generator', function () {
+        providedDefaultValue = 'this is the default value';
+        before(function () {
+          defaultMap = DefaultMap.fromHash(data, { defaultValue: providedDefaultValue });
+        });
+        it('creates an entry with the default value', function () {
+          expect(defaultMap.get('nopeKey')).to.equal(providedDefaultValue);
+        });
       });
     });
   });
