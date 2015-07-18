@@ -19,28 +19,6 @@ describe('DefaultMap', function () {
         it('creates an instance with an undefined default value', function () {
             expect(defaultMap.defaultValue).to.be.undefined;
         });
-        it('creates an instance which does not memoize', function () {
-            expect(defaultMap.options.memoize).to.be.false;
-        });
-      });
-
-      describe('with the memoize flag set to true', function () {
-        var defaultMap;
-        var options = { memoize: true };
-        before(function () { defaultMap = new DefaultMap(options); });
-
-        it('creates an instance of the DefaultMap prototype', function () {
-            expect(defaultMap).to.be.an.instanceof(DefaultMap);
-        });
-        it('creates an instance without generator', function () {
-            expect(defaultMap.hasGenerator).to.be.false;
-        });
-        it('creates an instance with an undefined default value', function () {
-            expect(defaultMap.defaultValue).to.be.undefined;
-        });
-        it('creates an instance which memoize', function () {
-            expect(defaultMap.options.memoize).to.be.true;
-        });
       });
 
       describe('with a defaultValue', function () {
@@ -57,9 +35,6 @@ describe('DefaultMap', function () {
         });
         it('creates an instance with the provided default value', function () {
             expect(defaultMap.defaultValue).to.equal(providedDefaultValue);
-        });
-        it('creates an instance which does not memoize', function () {
-            expect(defaultMap.options.memoize).to.be.false;
         });
       });
 
@@ -78,9 +53,6 @@ describe('DefaultMap', function () {
         it('creates an instance with the provided default value', function () {
             expect(defaultMap.defaultValue).to.equal(providedDefaultValue);
         });
-        it('creates an instance which does not memoize', function () {
-            expect(defaultMap.options.memoize).to.be.false;
-        });
       });
 
       describe('with a defaultGenerator', function () {
@@ -98,9 +70,6 @@ describe('DefaultMap', function () {
         });
         it('creates an instance with an undefined default value', function () {
             expect(defaultMap.defaultValue).to.be.undefined;
-        });
-        it('creates an instance which does not memoize', function () {
-            expect(defaultMap.options.memoize).to.be.false;
         });
       });
   });
@@ -153,28 +122,6 @@ describe('DefaultMap', function () {
         expect(defaultMap.get('nopeKey')).to.equal('generated value for key: "nopeKey").');
         expect(defaultMap.get('nopeKey')).to.equal('generated value for key: "nopeKey").');
         expect(providedDefaultGenerator).to.have.been.called.once();
-      });
-    });
-    describe('when using the memoize option', function () {
-      var defaultMap;
-      var providedDefaultGenerator = chai.spy(testGenerator);
-      before(function () {
-        defaultMap = new DefaultMap({
-          'memoize': true,
-          defaultGenerator: providedDefaultGenerator
-        });
-      });
-      describe('when getting a key for the first time', function () {
-        it('generates a new value', function () {
-          expect(defaultMap.get('dummyKey')).to.equal('generated value for key: "dummyKey").');
-          expect(providedDefaultGenerator).to.have.been.called.once();
-        });
-      });
-      describe('when getting the same key again', function () {
-        it('uses the previous generated value', function () {
-          expect(defaultMap.get('dummyKey')).to.equal('generated value for key: "dummyKey").');
-          expect(providedDefaultGenerator).to.have.been.called.once();
-        });
       });
     });
   });

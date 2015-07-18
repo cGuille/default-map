@@ -7,15 +7,11 @@
     // You should specify one (and only one) of the two following options:
     defaultValue: undefined,
     defaultGenerator: undefined,
-
-    memoize: false // Set to true to cache the defaultGenerator calls.
   };
 
   function DefaultMap(options) {
     this.map = {};
     this.keys = {};
-    this.memoized = {};
-    this.memoizedKeys = {};
     this.options = mergeDefaultOptions.call(this, options || {});
     this.defaultValue = this.options.defaultValue;
     this.defaultGenerator = this.options.defaultGenerator;
@@ -46,7 +42,6 @@
   DefaultMap.prototype.set = function DefaultMap_set(key, value) {
     this.map[key] = value;
     this.keys[key] = true;
-    delete this.memoizedKeys[key];
   };
 
   DefaultMap.prototype.has = function DefaultMap_has(key) {
@@ -56,7 +51,6 @@
   DefaultMap.prototype.delete = function DefaultMap_delete(key) {
     delete this.keys[key];
     delete this.map[key];
-    delete this.memoizedKeys[key];
   };
 
   DefaultMap.prototype.get = function DefaultMap_get(key) {
@@ -78,13 +72,6 @@
     var newValue;
     if (!this.hasGenerator) {
       newValue = this.defaultValue;
-    } else if (this.options.memoize) {
-      if (this.memoizedKeys[key]) {
-        newValue = this.memoized[key];
-      } else {
-        newValue = this.memoized[key] = this.defaultGenerator(key);
-        this.memoizedKeys[key] = true;
-      }
     } else {
       newValue = this.defaultGenerator(key);
     }
