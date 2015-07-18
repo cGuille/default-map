@@ -217,8 +217,19 @@ describe('DefaultMap', function () {
         var iterator = chai.spy();
         defaultMap.forEach(iterator);
         expect(iterator).to.have.been.called.twice();
-        expect(iterator).to.have.been.called.with('existing value', 'existingKey');
-        expect(iterator).to.have.been.called.with('value', 'dummy');
+        expect(iterator).to.have.been.called.with('existing value', 'existingKey', defaultMap);
+        expect(iterator).to.have.been.called.with('value', 'dummy', defaultMap);
+      });
+      describe('when thisArg is provided', function () {
+        var thisArgValue = { thisIs: 'the thisArg value' };
+        it("provides it as the function's context", function () {
+          var iteratorCalled = false;
+          defaultMap.forEach(function () {
+            iteratorCalled = true;
+            expect(this).to.equal(thisArgValue);
+          }, thisArgValue);
+          expect(iteratorCalled).to.be.true;
+        });
       });
     });
     describe('when the map is empty', function () {
