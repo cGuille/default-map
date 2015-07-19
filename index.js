@@ -62,6 +62,10 @@
     return this.map[key];
   };
 
+  DefaultMap.prototype.isEmpty = function DefaultMap_isEmpty() {
+    return !Object.getOwnPropertyNames(this.map).length;
+  };
+
   DefaultMap.prototype.forEach = function DefaultMap_forEach(fn, thisArg) {
     for (var key in this.map) {
       if (this.map.hasOwnProperty(key)) {

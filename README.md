@@ -74,6 +74,12 @@ map.delete('foo');
 map.toHash();
 ```
 
+## Checking if the map is empty
+
+```js
+map.isEmpty();
+```
+
 ## Iterating over the whole entry set
 
 ```js

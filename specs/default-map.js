@@ -334,4 +334,35 @@ describe('DefaultMap', function () {
       });
     });
   });
+
+  describe('#isEmpty', function () {
+    var defaultMap;
+    describe('when the map does not contain any entry', function () {
+      before(function () {
+        defaultMap = new DefaultMap();
+      });
+      it('returns true', function () {
+        expect(defaultMap.isEmpty()).to.be.true;
+      });
+    });
+    describe('when the map contains entries', function () {
+      var data = { existingKey: 'existing value', dummy: 'value' };
+      before(function () {
+        defaultMap = DefaultMap.fromHash(data);
+      });
+      it('returns false', function () {
+        expect(defaultMap.isEmpty()).to.be.false;
+      });
+    });
+    describe('when the existing entry has just been deleted', function () {
+      var data = { existingKey: 'existing value' };
+      before(function () {
+        defaultMap = DefaultMap.fromHash(data);
+        defaultMap.delete('existingKey');
+      });
+      it('returns true', function () {
+        expect(defaultMap.isEmpty()).to.be.true;
+      });
+    });
+  });
 });
