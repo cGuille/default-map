@@ -7,8 +7,7 @@ describe('DefaultMap', function () {
   describe('constructor', function () {
       describe('without parameters', function () {
         var defaultMap;
-        var options;
-        before(function () { defaultMap = new DefaultMap(options); });
+        before(function () { defaultMap = new DefaultMap(); });
 
         it('creates an instance of the DefaultMap prototype', function () {
             expect(defaultMap).to.be.an.instanceof(DefaultMap);
@@ -18,6 +17,9 @@ describe('DefaultMap', function () {
         });
         it('creates an instance with an undefined default value', function () {
             expect(defaultMap.defaultValue).to.be.undefined;
+        });
+        it('creates an instance without any data', function () {
+            expect(defaultMap.isEmpty()).to.be.true;
         });
       });
 
@@ -36,6 +38,9 @@ describe('DefaultMap', function () {
         it('creates an instance with the provided default value', function () {
             expect(defaultMap.defaultValue).to.equal(providedDefaultValue);
         });
+        it('creates an instance without any data', function () {
+            expect(defaultMap.isEmpty()).to.be.true;
+        });
       });
 
       describe('with a function as defaultValue', function () {
@@ -52,6 +57,9 @@ describe('DefaultMap', function () {
         });
         it('creates an instance with the provided default value', function () {
             expect(defaultMap.defaultValue).to.equal(providedDefaultValue);
+        });
+        it('creates an instance without any data', function () {
+            expect(defaultMap.isEmpty()).to.be.true;
         });
       });
 
@@ -71,44 +79,55 @@ describe('DefaultMap', function () {
         it('creates an instance with an undefined default value', function () {
             expect(defaultMap.defaultValue).to.be.undefined;
         });
+        it('creates an instance without any data', function () {
+            expect(defaultMap.isEmpty()).to.be.true;
+        });
       });
-  });
 
-  describe('.fromHash', function () {
-    var defaultMap;
-    var providedData = { 'foo': 1, 'bar': new Date() };
-    var providedDefaultValue = 'THIS IS THE TEST DEFAULT VALUE';
-    before(function () {
-      defaultMap = DefaultMap.fromHash(providedData, { defaultValue: providedDefaultValue });
-    });
-    it('creates a DefaultMap instance', function () {
-      expect(defaultMap).to.be.an.instanceof(DefaultMap);
-    });
-    it('stores the provided data into the created instance', function () {
-      expect(defaultMap.map).to.deep.equal(providedData);
-    });
-    it('uses the provided options', function () {
-      expect(defaultMap.defaultValue).to.equal(providedDefaultValue);
-    });
+      describe('with default data', function () {
+        var defaultMap;
+        var providedData = { initial: 'value' };
+        var options = { data: providedData };
+        before(function () { defaultMap = new DefaultMap(options); });
+
+        it('creates an instance of the DefaultMap prototype', function () {
+            expect(defaultMap).to.be.an.instanceof(DefaultMap);
+        });
+        it('creates an instance without generator', function () {
+            expect(defaultMap.hasGenerator).to.be.false;
+        });
+        it('creates an instance with an undefined default value', function () {
+            expect(defaultMap.defaultValue).to.be.undefined;
+        });
+        it('creates a non empty instance', function () {
+            expect(defaultMap.isEmpty()).to.be.false;
+        });
+        it('creates an instance which has the provided key', function () {
+            expect(defaultMap.has('initial')).to.be.true;
+        });
+        it('creates an instance which has the provided entry', function () {
+            expect(defaultMap.get('initial')).to.deep.equal('value');
+        });
+      });
   });
 
   describe('#toHash', function () {
     var defaultMap;
-    var data = { foo: 'bar', baz: 42, createdAt: new Date() };
+    var providedData = { foo: 'bar', baz: 42, createdAt: new Date() };
     before(function () {
-      defaultMap = DefaultMap.fromHash(data);
+      defaultMap = new DefaultMap({ data: providedData });
     });
     it('returns an objects containing the instance\'s data', function () {
-      expect(defaultMap.toHash()).to.deep.equal(data);
+      expect(defaultMap.toHash()).to.deep.equal(providedData);
     });
   });
 
   describe('#get', function () {
     var defaultMap;
-    var data = { existingKey: 'existing value' };
+    var providedData = { existingKey: 'existing value' };
     var providedDefaultGenerator = chai.spy(testGenerator);
     before(function () {
-      defaultMap = DefaultMap.fromHash(data, { defaultGenerator: providedDefaultGenerator });
+      defaultMap = new DefaultMap({ data: providedData, defaultGenerator: providedDefaultGenerator });
     });
     describe('when the key already exists', function () {
       it('returns the existing value', function () {
@@ -210,10 +229,10 @@ describe('DefaultMap', function () {
 
   describe('#set', function () {
     var defaultMap;
-    var data = { existingKey: 'existing value' };
+    var providedData = { existingKey: 'existing value' };
     var providedDefaultGenerator = chai.spy(testGenerator);
     before(function () {
-      defaultMap = DefaultMap.fromHash(data, { defaultGenerator: providedDefaultGenerator });
+      defaultMap = new DefaultMap({ data: providedData, defaultGenerator: providedDefaultGenerator });
     });
     describe('when the key already exists', function () {
       it('erases the existing value', function () {
@@ -233,10 +252,10 @@ describe('DefaultMap', function () {
 
   describe('#has', function () {
     var defaultMap;
-    var data = { existingKey: 'existing value' };
+    var providedData = { existingKey: 'existing value' };
     var providedDefaultGenerator = chai.spy(testGenerator);
     before(function () {
-      defaultMap = DefaultMap.fromHash(data, { defaultGenerator: providedDefaultGenerator });
+      defaultMap = new DefaultMap({ data: providedData, defaultGenerator: providedDefaultGenerator });
     });
     describe('when the key exists', function () {
       it('returns true', function () {
@@ -266,11 +285,11 @@ describe('DefaultMap', function () {
 
   describe('#delete', function () {
     var defaultMap;
-    var data = { existingKey: 'existing value' };
+    var providedData = { existingKey: 'existing value' };
     describe('when the key exists', function () {
       var providedDefaultGenerator = chai.spy(testGenerator);
       before(function () {
-        defaultMap = DefaultMap.fromHash(data, { defaultGenerator: providedDefaultGenerator });
+        defaultMap = new DefaultMap({ data: providedData, defaultGenerator: providedDefaultGenerator });
       });
       it('removes it', function () {
         defaultMap.delete('existingKey');
@@ -283,7 +302,7 @@ describe('DefaultMap', function () {
     describe('when the key does not exist', function () {
       var providedDefaultGenerator = chai.spy(testGenerator);
       before(function () {
-        defaultMap = DefaultMap.fromHash(data, { defaultGenerator: providedDefaultGenerator });
+        defaultMap = new DefaultMap({ data: providedData, defaultGenerator: providedDefaultGenerator });
       });
       it('does not raise an error', function () {
         expect(defaultMap.has('nopeKey')).to.be.false;
@@ -299,9 +318,9 @@ describe('DefaultMap', function () {
   describe('#forEach', function () {
     var defaultMap;
     describe('when the map contains entries', function () {
-      var data = { existingKey: 'existing value', dummy: 'value' };
+      var providedData = { existingKey: 'existing value', dummy: 'value' };
       before(function () {
-        defaultMap = DefaultMap.fromHash(data);
+        defaultMap = new DefaultMap({ data: providedData });
       });
       it('iterates over all the entries', function () {
         var iterator = chai.spy();
@@ -323,9 +342,9 @@ describe('DefaultMap', function () {
       });
     });
     describe('when the map is empty', function () {
-      var data = {};
+      var providedData = {};
       before(function () {
-        defaultMap = DefaultMap.fromHash(data);
+        defaultMap = new DefaultMap({ data: providedData });
       });
       var iterator = chai.spy();
       it('does not call the provided iterator', function () {
@@ -346,18 +365,18 @@ describe('DefaultMap', function () {
       });
     });
     describe('when the map contains entries', function () {
-      var data = { existingKey: 'existing value', dummy: 'value' };
+      var providedData = { existingKey: 'existing value', dummy: 'value' };
       before(function () {
-        defaultMap = DefaultMap.fromHash(data);
+        defaultMap = new DefaultMap({ data: providedData });
       });
       it('returns false', function () {
         expect(defaultMap.isEmpty()).to.be.false;
       });
     });
     describe('when the existing entry has just been deleted', function () {
-      var data = { existingKey: 'existing value' };
+      var providedData = { existingKey: 'existing value' };
       before(function () {
-        defaultMap = DefaultMap.fromHash(data);
+        defaultMap = new DefaultMap({ data: providedData });
         defaultMap.delete('existingKey');
       });
       it('returns true', function () {

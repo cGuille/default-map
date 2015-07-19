@@ -7,31 +7,25 @@
     // You should specify one (and only one) of the two following options:
     defaultValue: undefined,
     defaultGenerator: undefined,
+
+    // Initial data in the map:
+    data: {},
   };
 
   function DefaultMap(options) {
+    this.options = mergeDefaultOptions.call(this, options || {});
     this.map = {};
     this.keys = {};
-    this.options = mergeDefaultOptions.call(this, options || {});
+
     this.defaultValue = this.options.defaultValue;
     delete this.options.defaultValue;
     this.defaultGenerator = this.options.defaultGenerator;
     delete this.options.defaultGenerator;
     this.hasGenerator = typeof(this.defaultGenerator) === 'function';
+
+    insertInitialData.call(this);
+    delete this.options.data;
   }
-
-  DefaultMap.fromHash = function DefaultMap_fromHash(data, options) {
-    var instance = new DefaultMap(options);
-    var key;
-
-    for (key in data) {
-      if (data.hasOwnProperty(key)) {
-        instance.set(key, data[key]);
-      }
-    }
-
-    return instance;
-  };
 
   DefaultMap.prototype.toHash = function DefaultMap_toHash() {
     var hash = {};
@@ -104,6 +98,14 @@
       }
     }
     return userOptions;
+  }
+
+  function insertInitialData() {
+    for (var key in this.options.data) {
+      if (this.options.data.hasOwnProperty(key)) {
+        this.set(key, this.options.data[key]);
+      }
+    }
   }
 
   function objectShallowCopy(original) {

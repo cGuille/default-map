@@ -36,10 +36,11 @@ var map = new DefaultMap({ defaultGenerator: function (key) {
 
 ### With initial data
 
-Use the `DefaultMap.fromHash(data, options)` method.
-
 ```js
-var map = DefaultMap.fromHash({ the: 'initial data' }, { defaultValue: 'the default value' });
+var map = new DefaultMap({
+  data: { the: 'initial data' },
+  defaultValue: 'the default value'
+});
 ```
 
 ## Checking key existence
