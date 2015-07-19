@@ -71,7 +71,15 @@
   function assignDefaultValue(key) {
     var newValue;
     if (!this.hasGenerator) {
-      newValue = this.defaultValue;
+      if (Array.isArray(this.defaultValue)) {
+        newValue = this.defaultValue.slice();
+      } else if (this.defaultValue instanceof Date) {
+        newValue = new Date(this.defaultValue);
+      } else if (typeof(this.defaultValue) === 'object') {
+        newValue = objectShallowCopy(this.defaultValue);
+      } else {
+        newValue = this.defaultValue;
+      }
     } else {
       newValue = this.defaultGenerator(key);
     }
@@ -90,5 +98,18 @@
       }
     }
     return userOptions;
+  }
+
+  function objectShallowCopy(original) {
+    var clone = Object.create(Object.getPrototypeOf(original));
+
+    Object.getOwnPropertyNames(original).forEach(function (key) {
+      Object.defineProperty(
+        clone,
+        key,
+        Object.getOwnPropertyDescriptor(original, key)
+      );
+    });
+    return clone ;
   }
 }())

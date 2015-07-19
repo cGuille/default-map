@@ -126,12 +126,83 @@ describe('DefaultMap', function () {
         });
       });
       describe('without a default generator', function () {
-        providedDefaultValue = 'this is the default value';
-        before(function () {
-          defaultMap = DefaultMap.fromHash(data, { defaultValue: providedDefaultValue });
+        describe('with a string as default value', function () {
+          var providedDefaultValue = 'default value';
+          before(function () {
+            defaultMap = new DefaultMap({ defaultValue: providedDefaultValue });
+          });
+          it('generates a value using the default one', function () {
+            expect(defaultMap.get('key')).to.equal(providedDefaultValue);
+          });
         });
-        it('creates an entry with the default value', function () {
-          expect(defaultMap.get('nopeKey')).to.equal(providedDefaultValue);
+        describe('with a number as default value', function () {
+          var providedDefaultValue = 1;
+          before(function () {
+            defaultMap = new DefaultMap({ defaultValue: providedDefaultValue });
+          });
+          it('generates a value using the default one', function () {
+            expect(defaultMap.get('key')).to.equal(providedDefaultValue);
+          });
+        });
+        describe('with an object as default value', function () {
+          var providedDefaultValue = { foo: 'bar' };
+          before(function () {
+            defaultMap = new DefaultMap({ defaultValue: providedDefaultValue });
+            defaultMap.get('firstKey');
+            defaultMap.get('secondKey');
+          });
+          it('generates values which do not reference the same objects', function () {
+            expect(defaultMap.get('firstKey')).to.deep.equal(providedDefaultValue);
+            expect(defaultMap.get('firstKey')).to.deep.equal(defaultMap.get('secondKey'));
+            defaultMap.get('firstKey').foo = 'changed';
+            expect(defaultMap.get('firstKey')).not.to.deep.equal(defaultMap.get('secondKey'));
+          });
+        });
+        describe('with an array as default value', function () {
+          var providedDefaultValue = [1];
+          before(function () {
+            defaultMap = new DefaultMap({ defaultValue: providedDefaultValue });
+            defaultMap.get('firstKey');
+            defaultMap.get('secondKey');
+          });
+          it('generates values which do not reference the same arrays', function () {
+            expect(defaultMap.get('firstKey')).to.deep.equal(providedDefaultValue);
+            expect(defaultMap.get('firstKey')).to.deep.equal(defaultMap.get('secondKey'));
+            defaultMap.get('firstKey').push(2);
+            expect(defaultMap.get('firstKey')).not.to.deep.equal(defaultMap.get('secondKey'));
+          });
+        });
+        describe('with a date as default value', function () {
+          var providedDefaultValue = new Date(0);
+          before(function () {
+            defaultMap = new DefaultMap({ defaultValue: providedDefaultValue });
+            defaultMap.get('firstKey');
+            defaultMap.get('secondKey');
+          });
+          it('generates values which do not reference the same instances', function () {
+            expect(defaultMap.get('firstKey')).to.deep.equal(providedDefaultValue);
+            expect(defaultMap.get('firstKey')).to.deep.equal(defaultMap.get('secondKey'));
+            defaultMap.get('firstKey').setMinutes(1);
+            expect(defaultMap.get('firstKey')).not.to.deep.equal(defaultMap.get('secondKey'));
+          });
+        });
+        describe('with an instance of a custom constructor as default value', function () {
+          function FakeConstructor() {}
+          var providedDefaultValue = new FakeConstructor();
+          before(function () {
+            defaultMap = new DefaultMap({ defaultValue: providedDefaultValue });
+            defaultMap.get('firstKey');
+            defaultMap.get('secondKey');
+          });
+          it('generates values which do not reference the same instances', function () {
+            expect(defaultMap.get('firstKey')).to.deep.equal(providedDefaultValue);
+            expect(defaultMap.get('firstKey')).to.deep.equal(defaultMap.get('secondKey'));
+            defaultMap.get('firstKey').a = 1;
+            expect(defaultMap.get('firstKey')).not.to.deep.equal(defaultMap.get('secondKey'));
+          });
+          it('preserves the prototype', function () {
+            expect(defaultMap.get('key')).to.be.an.instanceof(FakeConstructor);
+          });
         });
       });
     });
