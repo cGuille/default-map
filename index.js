@@ -14,7 +14,9 @@
     this.keys = {};
     this.options = mergeDefaultOptions.call(this, options || {});
     this.defaultValue = this.options.defaultValue;
+    delete this.options.defaultValue;
     this.defaultGenerator = this.options.defaultGenerator;
+    delete this.options.defaultGenerator;
     this.hasGenerator = typeof(this.defaultGenerator) === 'function';
   }
 
